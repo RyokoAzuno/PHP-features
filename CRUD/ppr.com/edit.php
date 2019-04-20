@@ -1,6 +1,6 @@
 <?php
 // Include config file
-require_once "equipmentService.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "/models/equipmentService.php";
  
 // Define variables and initialize with empty values
 $inventoryNumber = $name = $model = $lastRepair = $nextRepair = "";

@@ -2,7 +2,7 @@
 // Process delete operation after confirmation
 if(isset($_POST["id"]) && !empty($_POST["id"])){
     // Include config file
-    require_once "equipmentService.php";
+    require_once $_SERVER['DOCUMENT_ROOT'] . "/models/equipmentService.php";
     
 	$service = new EquipmentService($mysqli);
 	$service->remove(trim($_POST["id"]));   

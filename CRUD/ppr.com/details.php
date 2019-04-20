@@ -2,7 +2,7 @@
 // Check existence of id parameter before processing further
 if(isset($_GET["id"]) && !empty(trim($_GET["id"]))){
     // Include config file
-    require_once "equipmentService.php";
+    require_once $_SERVER['DOCUMENT_ROOT'] . "/models/equipmentService.php";
     	
 	$service = new EquipmentService($mysqli);
 	$equipment = $service->getById(trim($_GET["id"]));

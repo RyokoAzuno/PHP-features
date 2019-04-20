@@ -2,33 +2,10 @@
 // Process delete operation after confirmation
 if(isset($_POST["id"]) && !empty($_POST["id"])){
     // Include config file
-    require_once "connection.php";
+    require_once "equipmentService.php";
     
-    // Prepare a delete statement
-    $sql = "DELETE FROM equipments WHERE id = ?";
-    
-    if($stmt = $mysqli->prepare($sql)){
-        // Bind variables to the prepared statement as parameters
-        $stmt->bind_param("i", $param_id);
-        
-        // Set parameters
-        $param_id = trim($_POST["id"]);
-        
-        // Attempt to execute the prepared statement
-        if($stmt->execute()){
-            // Records deleted successfully. Redirect to landing page
-            header("location: index.php");
-            exit();
-        } else{
-            echo "Что-то пошло не так!. Попробуйте после чашечки кофе!.";
-        }
-    }
-     
-    // Close statement
-    $stmt->close();
-    
-    // Close connection
-    $mysqli->close();
+	$service = new EquipmentService($mysqli);
+	$service->remove(trim($_POST["id"]));   
 } else{
     // Check existence of id parameter
     if(empty(trim($_GET["id"]))){

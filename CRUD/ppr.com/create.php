@@ -1,6 +1,6 @@
 <?php
 // Include config file
-require_once "connection.php";
+require_once "equipmentService.php";
  
 // Define variables and initialize with empty values
 $inventoryNumber = $name = $model = $lastRepair = $nextRepair = "";
@@ -50,38 +50,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $nextRepair = $input_nextRepair;
     }
 
-    // Check input errors before inserting in database
-    if(empty($inventoryNumber_err) && empty($name_err) && empty($model_err) && empty($lastRepair_err) && empty($nextRepair_err)){
-        // Prepare an insert statement
-        $sql = "INSERT INTO equipments (InventoryNumber, Name, Model, LastRepair, NextRepair) VALUES (?, ?, ?, ?, ?)";
- 
-        if($stmt = $mysqli->prepare($sql)){
-            // Bind variables to the prepared statement as parameters
-            $stmt->bind_param("sssss", $param_inventoryNumber, $param_name, $param_model, $param_lastRepair, $param_nextRepair);
-            
-            // Set parameters
-			$param_inventoryNumber = $inventoryNumber;
-			$param_name = $name;
-			$param_model = $model;
-			$param_lastRepair = $lastRepair;
-			$param_nextRepair = $nextRepair;
-            
-            // Attempt to execute the prepared statement
-            if($stmt->execute()){
-                // Records created successfully. Redirect to landing page
-                header("location: index.php");
-                exit();
-            } else{
-                echo "Что-то пошло не так!. Попробуйте после чашечки кофе!.";
-            }
-        }
-         
-        // Close statement
-        $stmt->close();
+    //Check input errors before inserting in database
+     if(empty($inventoryNumber_err) && empty($name_err) && empty($model_err) && empty($lastRepair_err) && empty($nextRepair_err)){
+		 $equipment = new Equipment(0, $inventoryNumber, $name, $model, $lastRepair, $nextRepair);
+		 $service = new EquipmentService($mysqli);
+		 $service->create($equipment);
     }
-    
-    // Close connection
-    $mysqli->close();
 }
 ?>
 <!DOCTYPE html>
@@ -101,7 +75,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         <h2>Создать запись</h2>
                     </div>
                     <p>Заполните форму.</p>
-                    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+                    <form action="<?php echo htmlspecialchars(basename($_SERVER['REQUEST_URI'])); ?>" method="post">
                         <div class="form-group <?php echo (!empty($inventoryNumber_err)) ? 'has-error' : ''; ?>">
                             <label>Инвентарный номер:</label>
                             <input type="text" name="inventoryNumber" class="form-control" value="<?php echo $inventoryNumber; ?>">

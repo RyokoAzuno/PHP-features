@@ -16,16 +16,19 @@
                 <div class="col-md-12">
                     <div class="page-header clearfix">
                         <h2 class="pull-left">Информация по оборудованию</h2>
-                        <a href="create.php" class="btn btn-success pull-right">Добавить оборудование</a>
+                        <div class="row">
+							<div class="coll-md-6"><a href="create.php" class="btn btn-success pull-right">Добавить оборудование</a></div></br></br>					
+							<div class="coll-md-6"><a href="reset.php" class="btn btn-success pull-right">Инициализировать базу с нуля</a></div>
+						</div>
+						
                     </div>
                     <?php
                     // Include config file
-                    require_once "connection.php";
-                    
-                    // Attempt select query execution
-                    $sql = "SELECT * FROM equipments";
-                    if($result = $mysqli->query($sql)){
-                        if($result->num_rows > 0){
+					require_once "equipmentService.php";
+					
+                    $service = new EquipmentService($mysqli);
+					$equipments = $service->getAll();
+					
                             echo "<table class='table table-bordered table-striped'>";
                                 echo "<thead>";
                                     echo "<tr>";
@@ -38,34 +41,25 @@
                                     echo "</tr>";
                                 echo "</thead>";
                                 echo "<tbody>";
-                                while($row = $result->fetch_array()){
+
+								foreach($equipments as $item){
                                     echo "<tr>";
-                                        echo "<td>" . $row['Id'] . "</td>";
-                                        echo "<td>" . $row['InventoryNumber'] . "</td>";
-                                        echo "<td>" . $row['Name'] . "</td>";
-                                        echo "<td>" . $row['Model'] . "</td>";
-										echo "<td>" . $row['LastRepair'] . "</td>";
-										echo "<td>" . $row['NextRepair'] . "</td>";
+                                        echo "<td>" . $item->getId() . "</td>";
+                                        echo "<td>" . $item->getInventoryNumber() . "</td>";
+                                        echo "<td>" . $item->getName() . "</td>";
+                                        echo "<td>" . $item->getModel() . "</td>";
+										echo "<td>" . $item->getLastRepair() . "</td>";
+										echo "<td>" . $item->getNextRepair() . "</td>";
                                         echo "<td>";
-                                            echo "<a href='details.php?id=". $row['Id'] ."' title='Просмотреть запись' data-toggle='tooltip'><span class='glyphicon glyphicon-eye-open'></span></a>";
-                                            echo "<a href='edit.php?id=". $row['Id'] ."' title='Редактировать запись' data-toggle='tooltip'><span class='glyphicon glyphicon-pencil'></span></a>";
-                                            echo "<a href='delete.php?id=". $row['Id'] ."' title='Удалить запись' data-toggle='tooltip'><span class='glyphicon glyphicon-trash'></span></a>";
+                                            echo "<a href='details.php?id=". $item->getId() ."' title='Просмотреть запись' data-toggle='tooltip'><span class='glyphicon glyphicon-eye-open'></span></a>";
+                                            echo "<a href='edit.php?id=". $item->getId() ."' title='Редактировать запись' data-toggle='tooltip'><span class='glyphicon glyphicon-pencil'></span></a>";
+                                            echo "<a href='delete.php?id=". $item->getId() ."' title='Удалить запись' data-toggle='tooltip'><span class='glyphicon glyphicon-trash'></span></a>";
                                         echo "</td>";
                                     echo "</tr>";
-                                }
+								}
+								
                                 echo "</tbody>";                            
                             echo "</table>";
-                            // Free result set
-                            $result->free();
-                        } else{
-                            echo "<p class='lead'><em>Записи не найдены.</em></p>";
-                        }
-                    } else{
-                        echo "ОШИБКА: Невозможно выполнить $sql. " . $mysqli->error;
-                    }
-                    
-                    // Close connection
-                    $mysqli->close();
                     ?>
                 </div>
             </div>        
